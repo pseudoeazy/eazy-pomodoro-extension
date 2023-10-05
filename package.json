@@ -4,7 +4,8 @@
   "description": "react chrome extension template",
   "scripts": {
     "start": "webpack --watch --progress --config webpack.dev.js",
-    "build": "webpack --progress --config webpack.prod.js"
+    "build": "webpack --progress --config webpack.prod.js",
+    "compile:popup": "node-sass src/sass/main-popup.scss src/popup/popup.css -w"
   },
   "author": "",
   "devDependencies": {
@@ -17,6 +18,7 @@
     "html-webpack-plugin": "^4.5.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-router-dom": "^6.16.0",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.1.0",
@@ -24,5 +26,12 @@
     "webpack": "^5.34.0",
     "webpack-cli": "^4.6.0",
     "webpack-merge": "^5.7.3"
+  },
+  "dependencies": {
+    "@fontsource/roboto": "^5.0.8",
+    "framer-motion": "^10.16.4",
+    "node-sass": "^9.0.0",
+    "react-chrome-extension-router": "^1.4.0",
+    "react-hook-form": "^7.47.0"
   }
 }

@@ -1,0 +1,41 @@
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin container {
+  max-width: 22rem;
+  width: 21.875rem;
+  padding-bottom: 1.25rem;
+  // animation: slideIn 1s linear;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-150%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@mixin gutter {
+  padding: 1.25rem 1rem;
+}
+
+@mixin top-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+}

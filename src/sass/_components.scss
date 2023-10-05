@@ -1,0 +1,396 @@
+.loader {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 5px solid #fff;
+  border-bottom-color: $color-black;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.alert {
+  &__error {
+    display: block;
+    color: $color-primary;
+  }
+}
+.feedback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 2rem;
+
+  & > span {
+    display: inline-block;
+  }
+}
+
+.button {
+  cursor: pointer;
+  background: transparent;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  &:link,
+  &:visited {
+    text-decoration: none;
+  }
+
+  &__img {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.44rem;
+  }
+  &__title {
+    display: inline-block;
+    color: $color-black;
+    font-family: Roboto;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    text-decoration: none;
+  }
+}
+
+.app-bar {
+  @include top-bar;
+
+  &__actions {
+    display: flex;
+    align-items: center;
+  }
+  &__action {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    &:not(:last-child) {
+      margin-right: 0.6rem;
+    }
+  }
+}
+
+.progress-bar {
+  @include flex-center;
+  padding: 0.94rem 1rem;
+
+  &__container {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 0.125rem;
+      background-color: $color-inactive;
+      width: 100%;
+    }
+  }
+
+  &__step {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background-color: $color-inactive;
+    &:not(:last-child) {
+      margin-right: 4rem;
+    }
+  }
+}
+
+.timer {
+  @include flex-center;
+  flex-direction: column;
+  padding: 1.25rem 1rem;
+
+  &__screen {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &__ready {
+    @include flex-center;
+    font-family: Roboto;
+    font-size: 1.125rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  &__figure {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__default {
+    color: $color-gray;
+  }
+
+  &__resting {
+    color: $color-blue;
+  }
+
+  &__focusing {
+    color: $color-primary;
+  }
+
+  &__paused {
+    color: rgba($color-black, 0.3);
+  }
+  &__circle {
+    display: inline-block;
+    margin-right: 0.5rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background-color: $color-primary;
+
+    & ~ strong {
+      color: #000;
+    }
+  }
+
+  &__time {
+    font-family: Roboto;
+    font-size: 2.625rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  &__button {
+    display: flex;
+    width: 100%;
+    height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    margin-top: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.3125rem;
+    font-family: Roboto;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration: none;
+    cursor: pointer;
+
+    &--default {
+      color: $color-white;
+      background: $color-primary;
+      border: none;
+    }
+    &--paused {
+      color: $color-white;
+      background: $color-primary;
+      border: none;
+    }
+    &--resting {
+      background: $color-white;
+      border: 1px solid $color-primary;
+      color: $color-primary;
+    }
+    &--focusing {
+      background: $color-white;
+      border: 1px solid $color-primary;
+      color: $color-primary;
+    }
+    &--short-break {
+      background: $color-blue;
+      border: 1px solid $color-blue;
+      color: $color-white;
+    }
+  }
+
+  &__btn-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  &__btns {
+    display: flex;
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+
+  &__link {
+    flex: 1;
+    display: flex;
+    height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: stretch;
+    color: $color-black;
+    font-family: Roboto;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    border-radius: 0.3125rem;
+    border: 1px solid $color-black;
+    transition: all 0.4s linear;
+    text-decoration: none;
+
+    &:active,
+    &:hover {
+      transform: translateY(2px);
+    }
+    &:not(:last-child) {
+      margin-right: 0.75rem;
+    }
+  }
+}
+
+.note-card {
+  &__container {
+    @include gutter;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &__content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    & button {
+      color: $color-black;
+      font-family: Roboto;
+      font-size: 1rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+  }
+
+  &__arrow {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+
+    &--right {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__notes {
+    @include flex-center;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  &__note {
+    @include flex-center;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.3125rem;
+  }
+
+  &__card {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f1f1f1;
+    margin-top: 1rem;
+    border-radius: 0.3125rem;
+
+    &-title {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+
+      & span {
+        display: inline-block;
+      }
+      &--text {
+        margin-left: 0.63rem;
+        color: #000;
+        font-family: Roboto;
+        font-size: 1.125rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+      }
+    }
+
+    &-note {
+      margin-top: 1.44rem;
+    }
+  }
+
+  &__empty {
+    color: $color-gray;
+    text-align: center;
+    font-family: Roboto;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  &__drop-down {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: 1;
+    height: fit-content;
+    border-radius: 0.25rem;
+    background: $color-white;
+    box-shadow: 0px 4px 10px 0px rgba(41, 53, 95, 0.17);
+  }
+  &__label {
+    display: flex;
+    align-items: center;
+  }
+  &__checkbox {
+    display: none;
+  }
+
+  &__item {
+    width: 100%;
+    padding: 0.69rem 0.94rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.4s ease-in;
+
+    &:hover,
+    &:active {
+      background: rgba(0, 0, 0, 0.1);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    & span {
+      &:not(:last-child) {
+        margin-right: 0.62rem;
+      }
+    }
+  }
+}
