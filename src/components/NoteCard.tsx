@@ -74,7 +74,7 @@ export default function NoteCard() {
   function handleEdit() {
     navigate("/add-note");
   }
-  console.log(noteCards);
+
   return (
     <div className="note-card__container">
       <div className="note-card__content">

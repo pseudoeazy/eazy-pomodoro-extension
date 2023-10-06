@@ -1,15 +1,24 @@
 import React from "react";
 import AppBar from "../AppBar";
 import Container from "../container";
+import { Link, useNavigate } from "react-router-dom";
+import { getStoredStatus, setStoredStatus } from "../../utils/storage";
+import { Actions, usePomodoro } from "../context/PomodoroContext";
+import { TimerStatus } from "../../types/time";
 //@ts-ignore
 import shortBreakImage from "../../assets/images/short-break.png";
-import { Link, useNavigate } from "react-router-dom";
 
 export default function StartShortBreak() {
   const navigate = useNavigate();
+  const { updatePomodoro } = usePomodoro();
 
-  function handleButtonClick() {
-    navigate("/resting");
+  function handleShortBreak() {
+    setStoredStatus(TimerStatus.RESTING).then(() => {
+      getStoredStatus().then((storedStatus) => {
+        updatePomodoro({ type: Actions.STATUS, payload: storedStatus });
+        navigate("/start");
+      });
+    });
   }
   return (
     <Container className="start-break">
@@ -27,7 +36,7 @@ export default function StartShortBreak() {
           <button
             type="button"
             className={`timer__button timer__button--short-break`}
-            onClick={handleButtonClick}
+            onClick={handleShortBreak}
           >
             Start short break
           </button>

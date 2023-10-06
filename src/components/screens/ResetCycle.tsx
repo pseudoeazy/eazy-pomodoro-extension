@@ -1,14 +1,24 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Container from "../container";
 import AppBar from "../AppBar";
-import { useNavigate } from "react-router-dom";
+import { getStoredStatus, setStoredStatus } from "../../utils/storage";
+import { TimerStatus } from "../../types/time";
+import { Actions, usePomodoro } from "../context/PomodoroContext";
 //@ts-ignore
 import deleteNoteImage from "../../assets/images/delete-note.png";
 
 export default function ResetCycle() {
   const navigate = useNavigate();
-  function handleDelete() {
-    navigate("/start");
+  const { updatePomodoro } = usePomodoro();
+
+  function handleRestart() {
+    setStoredStatus(TimerStatus.DEFAULT).then(() => {
+      getStoredStatus().then((storedStatus) => {
+        updatePomodoro({ type: Actions.STATUS, payload: storedStatus });
+        navigate("/start");
+      });
+    });
   }
   return (
     <Container className="delete-note">
@@ -35,7 +45,7 @@ export default function ResetCycle() {
           <button
             className="delete-note__button delete-note__button--fill"
             type="button"
-            onClick={handleDelete}
+            onClick={handleRestart}
           >
             Reset
           </button>

@@ -13,22 +13,25 @@ import ResetCycle from "../components/screens/ResetCycle";
 
 import "./popup.css";
 import "@fontsource/roboto";
+import PomodoroProvider from "../components/context/PomodoroProvider";
 
 function App() {
   return (
-    <MemoryRouter initialEntries={["/welcome"]}>
-      <Routes>
-        <Route path="/welcome" Component={Welcome} />
-        <Route path="/start" element={<StartFocusing />} />
-        <Route path="/add-note" element={<AddNote />} />
-        <Route path="/delete-note" element={<DeleteNote />} />
-        <Route path="/start-short-break" element={<StartShortBreak />} />
-        <Route path="/resting" element={<Resting />} />
-        <Route path="/long-break" element={<LongBreak />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/reset-cycle" element={<ResetCycle />} />
-      </Routes>
-    </MemoryRouter>
+    <PomodoroProvider>
+      <MemoryRouter initialEntries={["/welcome"]}>
+        <Routes>
+          <Route path="/welcome" Component={Welcome} />
+          <Route path="/start" element={<StartFocusing />} />
+          <Route path="/add-note" element={<AddNote />} />
+          <Route path="/delete-note" element={<DeleteNote />} />
+          <Route path="/start-short-break" element={<StartShortBreak />} />
+          <Route path="/resting" element={<Resting />} />
+          <Route path="/long-break" element={<LongBreak />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/reset-cycle" element={<ResetCycle />} />
+        </Routes>
+      </MemoryRouter>
+    </PomodoroProvider>
   );
 }
 

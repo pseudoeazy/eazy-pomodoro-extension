@@ -1,38 +1,97 @@
-import React from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import Error from "../alerts/Error";
+import { Focus } from "../../types/settings";
+import { getFocusSettings, saveFocusSettings } from "../../utils/storage";
+
+const initialSetting: Focus = {
+  focusTimer: 25,
+  focusTitle: "Focusing completed",
+  focusDesktopNotification: false,
+  focusTabNotification: true,
+};
 
 const FocusContentForm = () => {
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
     mode: "onChange",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCheckedDesktop, setIsCheckedDesktop] = useState(false);
+  const [isCheckedTab, setIsCheckedTab] = useState(false);
 
-  const hanldeFocusSubmit = async ({ time, title }) => {};
+  const handleDesktopChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    setIsCheckedDesktop(checked);
+  };
+
+  const handleTabChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    setIsCheckedTab(checked);
+  };
+
+  const handleFocusSubmit = async ({ focusTimer, focusTitle }) => {
+    setIsLoading(true);
+    const formData: Focus = {
+      focusTimer,
+      focusTitle,
+      focusDesktopNotification: isCheckedDesktop,
+      focusTabNotification: isCheckedTab,
+    };
+
+    setTimeout(() => {
+      saveFocusSettings(formData).then(() => {
+        setIsLoading(false);
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {}, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (isMounted) {
+      getFocusSettings().then((storedSetting) => {
+        console.log({ storedSetting });
+        reset({
+          focusTimer: storedSetting["focusTimer"],
+          focusTitle: storedSetting["focusTitle"],
+        });
+
+        setIsCheckedDesktop(storedSetting["focusDesktopNotification"]);
+        setIsCheckedTab(storedSetting["focusTabNotification"]);
+      });
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <form
-      onSubmit={handleSubmit(hanldeFocusSubmit)}
+      onSubmit={handleSubmit(handleFocusSubmit)}
       className="add-note__form add-note__form--settings"
     >
       <div className="add-note__form-group">
-        <label htmlFor="time" className="add-note__label">
+        <label htmlFor="focusTimer" className="add-note__label">
           Duration in minutes
         </label>
         <input
-          name="time"
+          name="focusTimer"
           type="number"
           placeholder="25"
           className="add-note__input add-note__input--number"
-          {...register("time", {
+          {...register("focusTimer", {
             required: true,
           })}
         />
-        {errors.time && errors.time?.type === "required" && (
-          <span className="block w-full text-red-500 p-0.5 mt-0.5">
-            time cannot be blank
-          </span>
+        {errors["focusTimer"] && errors["focusTimer"]?.type === "required" && (
+          <Error text="time cannot be blank" />
         )}
       </div>
       <div className="add-note__form-group">
@@ -46,30 +105,31 @@ const FocusContentForm = () => {
           Textfield Title
         </label>
         <input
-          {...register("title", {
+          {...register("focusTitle", {
             required: true,
           })}
           type="text"
-          name="note"
+          name="focusTitle"
           placeholder="Enter input"
           className="add-note__input"
         />
-        {errors.title && errors.title?.type === "required" && (
-          <span className="block w-full text-red-500 p-0.5 mt-0.5">
-            title cannot be blank
-          </span>
+        {errors["focusTitle"] && errors["focusTitle"]?.type === "required" && (
+          <Error text="title cannot be blank" />
         )}
       </div>
+
       <div className="add-note__form-group">
         <div className="add-note__inner-group">
           <input
-            id="desktop-notification"
-            className="add-note__checkbox"
+            name={"focusDesktopNotification"}
             type="checkbox"
-            name="desktop-notification"
+            id={"focusDesktopNotification"}
+            className="add-note__checkbox"
+            checked={isCheckedDesktop}
+            onChange={handleDesktopChange}
           />
           <label
-            htmlFor="desktop-notification"
+            htmlFor={"focusDesktopNotification"}
             className="add-note__checkbox--text"
           >
             Show desktop notification when complete
@@ -79,22 +139,32 @@ const FocusContentForm = () => {
       <div className="add-note__form-group">
         <div className="add-note__inner-group">
           <input
+            name="focusTabNotification"
             type="checkbox"
-            name="tab-notification"
-            id="tab-notification"
+            id="focusTabNotification"
             className="add-note__checkbox"
+            checked={isCheckedTab}
+            onChange={handleTabChange}
           />
+
           <label
-            htmlFor="tab-notification"
+            htmlFor="focusTabNotification"
             className="add-note__checkbox--text"
           >
-            {" "}
             Show new tab notification when complete
           </label>
         </div>
       </div>
       <div className="add-note__form-group">
-        <button className="add-note__button">Save</button>
+        <button
+          className={`add-note__button ${
+            isLoading && "add-note__button--loading"
+          }`}
+          type="submit"
+          disabled={isLoading}
+        >
+          Save{isLoading ? "..." : ""}
+        </button>
       </div>
     </form>
   );

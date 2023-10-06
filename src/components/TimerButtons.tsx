@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { TimerStatus } from "../types/time";
+import { getStoredStatus, setStoredStatus } from "../utils/storage";
+import { Actions, usePomodoro } from "./context/PomodoroContext";
+import { Messages } from "../types/messages";
 
 const buttonStatusText = {
   focusing: "Pause",
@@ -9,17 +12,41 @@ const buttonStatusText = {
   default: "Start focusing",
 };
 
+const handleTimer = (action: TimerStatus) => {
+  switch (action) {
+    case TimerStatus.DEFAULT:
+      return TimerStatus.FOCUSING;
+    case TimerStatus.FOCUSING:
+      return TimerStatus.PAUSED;
+    case TimerStatus.PAUSED:
+      return TimerStatus.FOCUSING;
+    case TimerStatus.RESTING:
+      return TimerStatus.FOCUSING;
+  }
+};
+
 export default function TimerButtons() {
-  const [status, setStatus] = useState(TimerStatus.RESTING);
+  const { pomodoro, updatePomodoro } = usePomodoro();
+
+  const handlePomodoroState = () => {
+    chrome.runtime.sendMessage(
+      { type: Messages.TIMER_STATUS, status: handleTimer(pomodoro.status) },
+      (statusResponse: TimerStatus) => {
+        updatePomodoro({ type: Actions.STATUS, payload: statusResponse });
+      }
+    );
+  };
+
   return (
     <div className="timer__btn-group">
       <button
         type="button"
-        className={`timer__button timer__button--${status}`}
+        className={`timer__button timer__button--${pomodoro.status}`}
+        onClick={handlePomodoroState}
       >
-        {buttonStatusText[status]}
+        {buttonStatusText[pomodoro.status]}
       </button>
-      {status !== TimerStatus.DEFAULT && (
+      {pomodoro.status !== TimerStatus.DEFAULT && (
         <div className="timer__btns">
           <Link to="/start-short-break" className="timer__link">
             Start short break
