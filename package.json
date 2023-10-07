@@ -1,13 +1,13 @@
 {
-  "name": "react-chrome-extension",
+  "name": "eazy-pomodoro-chrome-extension",
   "version": "1.0.0",
-  "description": "react chrome extension template",
-  "scripts": {
+  "description": "A Pomodoro Chrome Extension in React and TypeScript using a simple Webpack build process",
+   "scripts": {
     "start": "webpack --watch --progress --config webpack.dev.js",
     "build": "webpack --progress --config webpack.prod.js",
     "compile:popup": "node-sass src/sass/main-popup.scss src/popup/popup.css -w"
   },
-  "author": "",
+  "author": "Otuokwu Chibuzor",
   "devDependencies": {
     "@types/chrome": "^0.0.181",
     "@types/copy-webpack-plugin": "^10.1.0",

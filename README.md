@@ -1,6 +1,6 @@
-# React Chrome Extension Boilerplate
+# Eazy Pomodoro Extension
 
-Boilerplate for building Chrome Extensions in React and TypeScript using a simple Webpack build process.
+A Pomodoro Chrome Extension in React and TypeScript using a simple Webpack build process.
 
 ## Getting Started
 
