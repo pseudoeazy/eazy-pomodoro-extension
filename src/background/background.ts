@@ -52,7 +52,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   saveFocusSettings({
-    focusTimer: 25,
+    focusTimer: 1,
     focusTitle: "Hello, 25 minutes has passed!",
     focusDesktopNotification: false,
     focusTabNotification: true,
@@ -91,6 +91,7 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
 
       if (status === TimerStatus.DEFAULT) {
         stopFocusingAlarm();
+        chrome.runtime.sendMessage({ type: Messages.RESET_STATUS });
       }
     });
   }

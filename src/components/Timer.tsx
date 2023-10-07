@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TimerStatus } from "../types/time";
-import { usePomodoro } from "./context/PomodoroContext";
+import { Actions, usePomodoro } from "./context/PomodoroContext";
+import { getStoredStatus, setStoredStatus } from "../utils/storage";
 
 const statusText = {
   default: "Ready?",
@@ -10,9 +11,17 @@ const statusText = {
 };
 
 export default function Timer() {
-  const { pomodoro } = usePomodoro();
+  const { pomodoro, updatePomodoro } = usePomodoro();
   const [minutes, setMinutes] = useState("00");
   const [seconds, setSeconds] = useState("00");
+
+  function handleRestart() {
+    setStoredStatus(TimerStatus.DEFAULT).then(() => {
+      getStoredStatus().then((storedStatus) => {
+        updatePomodoro({ type: Actions.STATUS, payload: storedStatus });
+      });
+    });
+  }
 
   function updateTimer() {
     chrome.storage.local.get(["timer", "focus"], (result) => {

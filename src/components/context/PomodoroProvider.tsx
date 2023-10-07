@@ -8,6 +8,7 @@ import {
   PomodoroContext,
 } from "./PomodoroContext";
 import { getStoredStatus } from "../../utils/storage";
+import { Messages } from "../../types/messages";
 
 const pomodoroReducer = (
   state: PomodoroAppState,
@@ -40,6 +41,14 @@ const PomodoroProvider: React.FC<Props> = ({ children }) => {
     getStoredStatus().then((status) =>
       updatePomodoro({ type: Actions.STATUS, payload: status })
     );
+    chrome.runtime.onMessage.addListener((message) => {
+      if ((message.type = Messages.RESET_STATUS)) {
+        console.log("reset status");
+        getStoredStatus().then((status) =>
+          updatePomodoro({ type: Actions.STATUS, payload: status })
+        );
+      }
+    });
   }, []);
   return (
     <PomodoroContext.Provider value={{ pomodoro, updatePomodoro }}>
