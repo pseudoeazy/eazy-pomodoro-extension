@@ -1,4 +1,3 @@
-import { Messages } from "../types/messages";
 import { Note } from "../types/note";
 import { Focus, ShortBreak } from "../types/settings";
 import { TimerStatus } from "../types/time";
@@ -19,7 +18,6 @@ export function saveFocusSettings(focus: Focus): Promise<void> {
 export function getFocusSettings(): Promise<Focus> {
   return new Promise((resolve) => {
     chrome.storage.local.get(["focus"], (result: LocalStorage) => {
-      console.log({ focus: result.focus });
       resolve(result.focus);
     });
   });

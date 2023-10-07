@@ -1,6 +1,6 @@
 {
-  "name": "React Extension",
-  "description": "Chrome Extension in React!",
+  "name": "Eazy Pomodoro Extension",
+  "description": "This tool helps you manage your work sessions effectively using the proven Pomodoro Technique.",
   "version": "1.0.0",
   "manifest_version": 3,
   "icons": {
@@ -10,10 +10,10 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "React Extension",
+    "default_title": "Eazy Pomodoro Extension",
     "default_icon": "icon.png"
   },
-  "permissions": ["storage", "tabs","alarms","notifications"],
+  "permissions": ["storage", "tabs","alarms","notifications", "activeTab"],
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js"

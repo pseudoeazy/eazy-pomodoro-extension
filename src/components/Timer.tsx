@@ -9,26 +9,23 @@ const statusText = {
   paused: "Paused",
 };
 
+function formatTime(seconds: number) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
 export default function Timer() {
   const { pomodoro } = usePomodoro();
-  const [minutes, setMinutes] = useState("00");
-  const [seconds, setSeconds] = useState("00");
+  const [time, setTime] = useState("00:00:00");
 
   function updateTimer() {
     chrome.storage.local.get(["timer", "focus"], (result) => {
-      // result.timer = 60 * 24 + 55;
-      const focusTimer = Number(result.focus.focusTimer);
-      const mins = `${focusTimer - Math.ceil(result.timer / 60)}`.padStart(
-        2,
-        "0"
-      );
-
-      let secs = "00";
-      if (result.timer % 60 !== 0) {
-        secs = `${60 - (result.timer % 60)}`.padStart(2, "0");
-      }
-      setMinutes(mins);
-      setSeconds(secs);
+      setTime(formatTime(result.timer));
     });
   }
 
@@ -51,7 +48,7 @@ export default function Timer() {
             <strong>{statusText[pomodoro.status]}</strong>
           </div>
           <time className={`timer__time timer__${pomodoro.status}`}>
-            00:{minutes}:{seconds}
+            {time}
           </time>
         </div>
       </div>

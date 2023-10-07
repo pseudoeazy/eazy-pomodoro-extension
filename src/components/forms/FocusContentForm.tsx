@@ -2,14 +2,14 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Error from "../alerts/Error";
 import { Focus } from "../../types/settings";
-import { getFocusSettings, saveFocusSettings } from "../../utils/storage";
-
-const initialSetting: Focus = {
-  focusTimer: 25,
-  focusTitle: "Focusing completed",
-  focusDesktopNotification: false,
-  focusTabNotification: true,
-};
+import { Actions, usePomodoro } from "../context/PomodoroContext";
+import { TimerStatus } from "../../types/time";
+import {
+  getFocusSettings,
+  getStoredStatus,
+  saveFocusSettings,
+  setStoredStatus,
+} from "../../utils/storage";
 
 const FocusContentForm = () => {
   const {
@@ -20,6 +20,7 @@ const FocusContentForm = () => {
   } = useForm({
     mode: "onChange",
   });
+  const { updatePomodoro } = usePomodoro();
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckedDesktop, setIsCheckedDesktop] = useState(false);
   const [isCheckedTab, setIsCheckedTab] = useState(false);
@@ -45,19 +46,27 @@ const FocusContentForm = () => {
 
     setTimeout(() => {
       saveFocusSettings(formData).then(() => {
-        setIsLoading(false);
+        chrome.storage.local.get(["focus"], (result) => {
+          const { focus } = result;
+          const timer = focus.focusTimer * 60; // reset timer
+          chrome.storage.local.set({ timer }, function () {
+            setIsLoading(false);
+          });
+        });
+        setStoredStatus(TimerStatus.DEFAULT).then(() => {
+          getStoredStatus().then((storedStatus) => {
+            updatePomodoro({ type: Actions.STATUS, payload: storedStatus });
+          });
+        });
       });
     }, 1000);
   };
-
-  useEffect(() => {}, []);
 
   useEffect(() => {
     let isMounted = true;
 
     if (isMounted) {
       getFocusSettings().then((storedSetting) => {
-        console.log({ storedSetting });
         reset({
           focusTimer: storedSetting["focusTimer"],
           focusTitle: storedSetting["focusTitle"],

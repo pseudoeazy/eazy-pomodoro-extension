@@ -2,6 +2,7 @@ import { Messages } from "../types/messages";
 import { Focus } from "../types/settings";
 import { TimerStatus } from "../types/time";
 import {
+  getFocusSettings,
   getStoredStatus,
   saveFocusSettings,
   saveNotes,
@@ -10,27 +11,30 @@ import {
 
 const EAZY_POMODORO_TIMER = "EAZY_POMODORO_TIMER";
 
-let startFocusAlarm = () => {
-  chrome.alarms.get(EAZY_POMODORO_TIMER, (alarmExist) => {
-    if (!alarmExist) {
-      startFocusAlarm = () => {
-        chrome.alarms.create(EAZY_POMODORO_TIMER, {
-          periodInMinutes: 1 / 60,
-        });
-      };
+function startFocusAlarm() {
+  chrome.storage.local.get(["timer", "focus"], (result) => {
+    const { focus, timer } = result;
+    const isDefault = timer === focus.focusTimer * 60;
+
+    if (isDefault || timer <= 0) {
+      const timer = focus.focusTimer * 60; // convert minute to seconds
+      chrome.storage.local.set({
+        timer,
+      });
+      chrome.alarms.create(EAZY_POMODORO_TIMER, {
+        periodInMinutes: 1 / 60,
+      });
     }
-    startFocusAlarm();
   });
-};
+}
 
 function stopFocusingAlarm() {
-  const timer = 0;
   setStoredStatus(TimerStatus.DEFAULT).then(() => {
-    chrome.storage.local.set({ timer }, function () {
-      chrome.storage.local.get(["timer"], (result) => {
-        console.log({ resetTimer: result.timer });
-      });
+    getFocusSettings().then((focus) => {
+      const timer = focus.focusTimer * 60; // reset timer
+      chrome.storage.local.set({ timer }, function () {});
     });
+
     chrome.alarms.clear(EAZY_POMODORO_TIMER);
   });
 }
@@ -47,12 +51,12 @@ function showNotification(message: string) {
 chrome.runtime.onInstalled.addListener(() => {
   //add default settings
   chrome.storage.local.set({
-    timer: 0,
+    timer: 0.3 * 60, // convert minute to seconds
     status: TimerStatus.DEFAULT,
   });
 
   saveFocusSettings({
-    focusTimer: 1,
+    focusTimer: 0.3,
     focusTitle: "Hello, 25 minutes has passed!",
     focusDesktopNotification: true,
     focusTabNotification: true,
@@ -75,29 +79,41 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
       const focus: Focus = result.focus;
 
       if (status === TimerStatus.FOCUSING) {
-        const timer = result.timer + 1;
-
-        if (result.timer === 60 * Number(focus.focusTimer)) {
+        const timer = result.timer - 1;
+        console.log({ timer });
+        if (result.timer <= 0) {
           status = TimerStatus.DEFAULT;
-          if (focus.focusDesktopNotification) {
-            showNotification(focus.focusTitle);
-          }
         }
         chrome.storage.local.set({ timer });
       }
 
       if (status === TimerStatus.DEFAULT) {
         stopFocusingAlarm();
-        chrome.runtime.sendMessage({ type: Messages.RESET_STATUS });
-        chrome.tabs.query(
-          { active: true, currentWindow: true },
-          function (tabs) {
-            const activeTab = tabs[0];
-            chrome.tabs.sendMessage(activeTab.id, {
-              type: Messages.RESET_STATUS,
-            });
+
+        if (focus.focusDesktopNotification) {
+          showNotification(focus.focusTitle);
+        }
+
+        chrome.tabs.query({ active: true }, function (tabs) {
+          const activeTab = tabs[0];
+          if (activeTab) {
+            chrome.tabs.sendMessage(
+              activeTab.id,
+              {
+                type: Messages.RESET_STATUS,
+              },
+              (response) => {
+                if (chrome.runtime.lastError) {
+                  // Handle the error, e.g., the popup is closed.
+                  console.log("error:", chrome.runtime.lastError);
+                  return;
+                } else {
+                  console.log("response from content:" + response);
+                }
+              }
+            );
           }
-        );
+        });
       }
     });
   }
@@ -114,9 +130,11 @@ async function processTimerStatus(status: TimerStatus) {
       break;
 
     case TimerStatus.PAUSED:
+      console.log("paused ", status);
       break;
 
     case TimerStatus.RESTING:
+      console.log("resting: ", status);
       break;
   }
 }
@@ -127,6 +145,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     setStoredStatus(msg.status).then(() => {
       getStoredStatus().then((storedStatus) => sendResponse(storedStatus));
     });
+  }
+
+  if (chrome.runtime.lastError) {
+    // Handle the error, e.g., the popup is closed.
+    console.log("error:", chrome.runtime.lastError);
     return true;
   }
+  return true;
 });
