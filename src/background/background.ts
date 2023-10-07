@@ -54,7 +54,7 @@ chrome.runtime.onInstalled.addListener(() => {
   saveFocusSettings({
     focusTimer: 1,
     focusTitle: "Hello, 25 minutes has passed!",
-    focusDesktopNotification: false,
+    focusDesktopNotification: true,
     focusTabNotification: true,
   });
 
@@ -82,9 +82,6 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
           if (focus.focusDesktopNotification) {
             showNotification(focus.focusTitle);
           }
-
-          if (focus.focusTabNotification) {
-          }
         }
         chrome.storage.local.set({ timer });
       }
@@ -92,6 +89,15 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
       if (status === TimerStatus.DEFAULT) {
         stopFocusingAlarm();
         chrome.runtime.sendMessage({ type: Messages.RESET_STATUS });
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            const activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, {
+              type: Messages.RESET_STATUS,
+            });
+          }
+        );
       }
     });
   }
