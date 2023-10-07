@@ -82,6 +82,8 @@ const FocusContentForm = () => {
           Duration in minutes
         </label>
         <input
+          min={1}
+          max={1440}
           name="focusTimer"
           type="number"
           placeholder="25"

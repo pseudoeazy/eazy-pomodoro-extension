@@ -127,6 +127,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     setStoredStatus(msg.status).then(() => {
       getStoredStatus().then((storedStatus) => sendResponse(storedStatus));
     });
+    return true;
   }
-  return true;
 });
