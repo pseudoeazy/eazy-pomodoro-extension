@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer } from "react";
 import { TimerStatus } from "../../types/time";
-
 import {
   PomodoroAppState,
   PomodoroAction,
@@ -41,9 +40,9 @@ const PomodoroProvider: React.FC<Props> = ({ children }) => {
     getStoredStatus().then((status) =>
       updatePomodoro({ type: Actions.STATUS, payload: status })
     );
+
     chrome.runtime.onMessage.addListener((message) => {
       if ((message.type = Messages.RESET_STATUS)) {
-        console.log("reset status");
         getStoredStatus().then((status) =>
           updatePomodoro({ type: Actions.STATUS, payload: status })
         );

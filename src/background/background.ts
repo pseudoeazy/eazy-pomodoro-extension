@@ -122,8 +122,6 @@ async function processTimerStatus(status: TimerStatus) {
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  // Handle the message here
-  console.log({ msg });
   if (msg.type === Messages.TIMER_STATUS) {
     processTimerStatus(msg.status);
     setStoredStatus(msg.status).then(() => {

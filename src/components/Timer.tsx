@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TimerStatus } from "../types/time";
-import { Actions, usePomodoro } from "./context/PomodoroContext";
-import { getStoredStatus, setStoredStatus } from "../utils/storage";
+import { usePomodoro } from "./context/PomodoroContext";
 
 const statusText = {
   default: "Ready?",
@@ -11,17 +10,9 @@ const statusText = {
 };
 
 export default function Timer() {
-  const { pomodoro, updatePomodoro } = usePomodoro();
+  const { pomodoro } = usePomodoro();
   const [minutes, setMinutes] = useState("00");
   const [seconds, setSeconds] = useState("00");
-
-  function handleRestart() {
-    setStoredStatus(TimerStatus.DEFAULT).then(() => {
-      getStoredStatus().then((storedStatus) => {
-        updatePomodoro({ type: Actions.STATUS, payload: storedStatus });
-      });
-    });
-  }
 
   function updateTimer() {
     chrome.storage.local.get(["timer", "focus"], (result) => {
@@ -31,6 +22,7 @@ export default function Timer() {
         2,
         "0"
       );
+
       let secs = "00";
       if (result.timer % 60 !== 0) {
         secs = `${60 - (result.timer % 60)}`.padStart(2, "0");
@@ -39,6 +31,7 @@ export default function Timer() {
       setSeconds(secs);
     });
   }
+
   useEffect(() => {
     updateTimer();
     const intervalId = setInterval(updateTimer, 1000);
@@ -46,6 +39,7 @@ export default function Timer() {
       clearInterval(intervalId);
     };
   }, []);
+
   return (
     <div className="timer">
       <div className="timer__screen">
