@@ -6,7 +6,7 @@ import LongBreakForm from "./forms/LongBreakForm";
 const tabs = [
   { id: "focus", label: "Focus" },
   { id: "short-break", label: "Short break" },
-  { id: "long-break", label: "Long break" },
+  // { id: "long-break", label: "Long break" },
 ];
 
 export default function Tab() {

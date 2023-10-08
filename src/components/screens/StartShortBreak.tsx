@@ -45,9 +45,9 @@ export default function StartShortBreak() {
             <Link to="/start" className="timer__link">
               Skip
             </Link>
-            <Link to="/long-break" className="timer__link">
+            {/* <Link to="/long-break" className="timer__link">
               Start long break
-            </Link>
+            </Link> */}
           </div>
         </div>
       </main>

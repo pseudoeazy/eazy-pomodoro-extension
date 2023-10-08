@@ -24,7 +24,7 @@ export default function Timer() {
   const [time, setTime] = useState("00:00:00");
 
   function updateTimer() {
-    chrome.storage.local.get(["timer", "focus"], (result) => {
+    chrome.storage.local.get(["timer"], (result) => {
       setTime(formatTime(result.timer));
     });
   }

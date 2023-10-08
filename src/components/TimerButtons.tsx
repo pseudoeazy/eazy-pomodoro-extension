@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { TimerStatus } from "../types/time";
-import { getStoredStatus, setStoredStatus } from "../utils/storage";
 import { Actions, usePomodoro } from "./context/PomodoroContext";
 import { Messages } from "../types/messages";
 
@@ -48,12 +47,14 @@ export default function TimerButtons() {
       </button>
       {pomodoro.status !== TimerStatus.DEFAULT && (
         <div className="timer__btns">
-          <Link to="/start-short-break" className="timer__link">
-            Start short break
-          </Link>
-          <Link to="/long-break" className="timer__link">
+          {pomodoro.status !== TimerStatus.RESTING && (
+            <Link to="/start-short-break" className="timer__link">
+              Start short break
+            </Link>
+          )}
+          {/* <Link to="/long-break" className="timer__link">
             Start long break
-          </Link>
+          </Link> */}
         </div>
       )}
     </div>

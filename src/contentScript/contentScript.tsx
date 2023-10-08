@@ -17,7 +17,7 @@ function App() {
         setTimeout(() => {
           sendResponse(Messages.RESET_STATUS);
           setIsTabNotification(false);
-        }, 7000);
+        }, 5000);
       }
       return true;
     });
