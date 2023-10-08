@@ -13,10 +13,9 @@ interface NoteCard {
   note: Note;
   toggle: boolean;
 }
-function sortNoteCard(notes: NoteCard[]) {
-  return notes.sort(
-    (noteCardA, noteCardB) => noteCardB.note.id - noteCardA.note.id
-  );
+
+function sortNotes(notes: Note[]) {
+  return notes.sort((noteA, noteB) => noteB.id - noteA.id);
 }
 export default function NoteCard() {
   const navigate = useNavigate();
@@ -28,7 +27,7 @@ export default function NoteCard() {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = noteCards.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = notes.length / itemsPerPage;
+  const totalPages = Math.ceil(notes.length / itemsPerPage);
 
   const handleToggle = (noteCardToToggle: NoteCard) => {
     const toggledCards = noteCards.map((noteCard) => {
@@ -64,24 +63,16 @@ export default function NoteCard() {
   };
 
   const handleNext = () => {
-    // setDirection("right");
-    // setCurrentSlide((prevIndex) => {
-    //   return prevIndex + 1 === notes.length ? 0 : prevIndex + 1;
-    // });
-    // if (curerntPage + 1 === notes.length || curerntPage + 1 > notes.length) {
-    //   return;
-    // }
-    // setCurrentPage((page) => page + 1);
+    setCurrentPage((page) => page + 1);
+  };
+  const handlePrevious = () => {
+    setCurrentPage((page) => page - 1);
   };
 
-  // useEffect(() => {
-  //   if (direction === "right") {
-  //     setNoteCards(notes.slice(curerntPage, curerntPage + notePerPage));
-  //   }
-  // }, [curerntPage]);
-
   useEffect(() => {
-    getNotes().then((notesFromStorage) => setNotes(notesFromStorage));
+    getNotes().then((notesFromStorage) => {
+      setNotes(sortNotes(notesFromStorage));
+    });
   }, []);
 
   useEffect(() => {
@@ -104,8 +95,13 @@ export default function NoteCard() {
   return (
     <div className="note-card__container">
       <div className="note-card__content">
-        <button className="note-card__arrow note-card__arrow--left">
-          <Arrow opacity="0.3" />
+        <button
+          className="note-card__arrow "
+          type="button"
+          disabled={currentPage <= 1}
+          onClick={handlePrevious}
+        >
+          <Arrow opacity={`${currentPage <= 1 ? "0.3" : "1"} `} />
         </button>
         <strong>
           Pomodoro {currentPage} of {totalPages}
@@ -113,13 +109,14 @@ export default function NoteCard() {
         <button
           className="note-card__arrow  note-card__arrow--right"
           type="button"
+          disabled={currentPage === totalPages}
           onClick={handleNext}
         >
-          <Arrow opacity="1" />
+          <Arrow opacity={currentPage === totalPages ? "0.3" : "1"} />
         </button>
       </div>
       <div className="note-card__notes">
-        {sortNoteCard(noteCards).map((noteCard, idx) => (
+        {currentItems.map((noteCard, idx) => (
           <div key={idx} className="note-card__card">
             <div className="note-card__card-title">
               <label
