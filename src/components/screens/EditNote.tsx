@@ -1,11 +1,11 @@
 import React from "react";
-import AddNoteForm from "../forms/AddNoteForm";
+import EditNoteForm from "../forms/EditNoteForm";
 import ModifyNote from "../ModifyNote";
 
 export default function AddNote() {
   return (
     <ModifyNote>
-      <AddNoteForm />
+      <EditNoteForm />
     </ModifyNote>
   );
 }

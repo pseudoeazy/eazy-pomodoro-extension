@@ -88,14 +88,14 @@ chrome.runtime.onInstalled.addListener(() => {
     focusTimer: 25,
     focusTitle: "Hello, 25 minutes has passed!",
     focusDesktopNotification: true,
-    focusTabNotification: true,
+    focusTabNotification: false,
   });
 
   saveShortBreakSettings({
     shortBreakTimer: 5,
     shortBreakTitle: "Break Over, 5 minutes has passed!",
     isShortBreakDesktopNotification: true,
-    isShortBreakTabNotification: true,
+    isShortBreakTabNotification: false,
   });
 
   saveNotes([

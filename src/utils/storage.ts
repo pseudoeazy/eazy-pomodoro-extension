@@ -37,6 +37,7 @@ export function getFocusSettings(): Promise<Focus> {
 
 export function saveNotes(notes: Note[]): Promise<void> {
   const values: LocalStorage = { notes };
+  console.log("saving notes ...");
   return new Promise((resolve) => {
     chrome.storage.local.set(values, () => {
       resolve();

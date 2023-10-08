@@ -332,6 +332,9 @@ button {
   background: #fcf7f4;
   box-shadow: 0px 4px 10px 0px rgba(41, 53, 95, 0.17); }
 
+.note-card__hide-menu {
+  display: none !important; }
+
 .note-card__label {
   display: flex;
   align-items: center; }
@@ -589,6 +592,8 @@ button {
     font-style: normal;
     font-weight: 400;
     line-height: normal; }
+    .delete-note__subtitle--warning {
+      color: #d45735; }
   .delete-note__figure {
     width: 100%;
     display: flex;

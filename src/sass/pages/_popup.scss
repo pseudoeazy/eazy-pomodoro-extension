@@ -274,6 +274,9 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+    &--warning {
+      color: $color-primary;
+    }
   }
   &__figure {
     width: 100%;

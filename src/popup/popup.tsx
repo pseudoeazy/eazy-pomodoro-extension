@@ -10,10 +10,11 @@ import Resting from "../components/screens/Resting";
 import LongBreak from "../components/screens/LongBreak";
 import Settings from "../components/screens/Settings";
 import ResetCycle from "../components/screens/ResetCycle";
+import EditNote from "../components/screens/EditNote";
+import PomodoroProvider from "../components/context/PomodoroProvider";
 
 import "./popup.css";
 import "@fontsource/roboto";
-import PomodoroProvider from "../components/context/PomodoroProvider";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
           <Route path="/welcome" Component={Welcome} />
           <Route path="/start" element={<StartFocusing />} />
           <Route path="/add-note" element={<AddNote />} />
-          <Route path="/delete-note" element={<DeleteNote />} />
+          <Route path="/add-note/:id" element={<EditNote />} />
+          <Route path="/delete-note/:id" element={<DeleteNote />} />
           <Route path="/start-short-break" element={<StartShortBreak />} />
           <Route path="/resting" element={<Resting />} />
           <Route path="/long-break" element={<LongBreak />} />
