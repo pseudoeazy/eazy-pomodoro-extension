@@ -21,12 +21,18 @@ function formatTime(seconds: number) {
 
 export default function Timer() {
   const { pomodoro } = usePomodoro();
-  const [time, setTime] = useState("00:00:00");
+  const [time, setTime] = useState<string>("00:00:00");
 
   function updateTimer() {
-    chrome.storage.local.get(["timer"], (result) => {
-      setTime(formatTime(result.timer));
-    });
+    if (pomodoro.status === TimerStatus.RESTING) {
+      chrome.storage.local.get(["sBTimer"], (result) => {
+        setTime(formatTime(result.sBTimer));
+      });
+    } else {
+      chrome.storage.local.get(["timer"], (result) => {
+        setTime(formatTime(result.timer));
+      });
+    }
   }
 
   useEffect(() => {

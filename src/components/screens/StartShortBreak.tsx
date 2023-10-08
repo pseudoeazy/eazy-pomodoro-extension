@@ -2,23 +2,24 @@ import React from "react";
 import AppBar from "../AppBar";
 import Container from "../container";
 import { Link, useNavigate } from "react-router-dom";
-import { getStoredStatus, setStoredStatus } from "../../utils/storage";
 import { Actions, usePomodoro } from "../context/PomodoroContext";
 import { TimerStatus } from "../../types/time";
 //@ts-ignore
 import shortBreakImage from "../../assets/images/short-break.png";
+import { Messages } from "../../types/messages";
 
 export default function StartShortBreak() {
   const navigate = useNavigate();
   const { updatePomodoro } = usePomodoro();
 
   function handleShortBreak() {
-    setStoredStatus(TimerStatus.RESTING).then(() => {
-      getStoredStatus().then((storedStatus) => {
-        updatePomodoro({ type: Actions.STATUS, payload: storedStatus });
+    chrome.runtime.sendMessage(
+      { type: Messages.TIMER_STATUS, status: TimerStatus.RESTING },
+      (statusResponse: TimerStatus) => {
+        updatePomodoro({ type: Actions.STATUS, payload: statusResponse });
         navigate("/start");
-      });
-    });
+      }
+    );
   }
   return (
     <Container className="start-break">

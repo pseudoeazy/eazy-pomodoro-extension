@@ -9,6 +9,18 @@ export interface LocalStorage {
   shortBreak?: ShortBreak;
 }
 
+export function saveShortBreakSettings(shortBreak: ShortBreak): Promise<void> {
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ shortBreak }, () => resolve());
+  });
+}
+export function getShortBreakSettings(): Promise<ShortBreak> {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["shortBreak"], (result: LocalStorage) => {
+      resolve(result.shortBreak);
+    });
+  });
+}
 export function saveFocusSettings(focus: Focus): Promise<void> {
   return new Promise((resolve) => {
     chrome.storage.local.set({ focus }, () => resolve());

@@ -42,7 +42,12 @@ const PomodoroProvider: React.FC<Props> = ({ children }) => {
     );
 
     chrome.runtime.onMessage.addListener((message) => {
-      if ((message.type = Messages.RESET_STATUS)) {
+      if (message.type === Messages.RESET_STATUS) {
+        getStoredStatus().then((status) =>
+          updatePomodoro({ type: Actions.STATUS, payload: status })
+        );
+      }
+      if (message.type === Messages.SHORTBREAK_OVER) {
         getStoredStatus().then((status) =>
           updatePomodoro({ type: Actions.STATUS, payload: status })
         );

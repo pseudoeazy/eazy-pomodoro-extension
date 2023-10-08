@@ -1,39 +1,113 @@
-import React from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import Error from "../alerts/Error";
+import { ShortBreak } from "../../types/settings";
+import { Actions, usePomodoro } from "../context/PomodoroContext";
+import { TimerStatus } from "../../types/time";
+import {
+  getShortBreakSettings,
+  getStoredStatus,
+  saveShortBreakSettings,
+  setStoredStatus,
+} from "../../utils/storage";
 
 const ShortBreakForm = () => {
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
     mode: "onChange",
   });
+  const { updatePomodoro } = usePomodoro();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCheckedDesktop, setIsCheckedDesktop] = useState(false);
+  const [isCheckedTab, setIsCheckedTab] = useState(false);
 
-  const hanldeFocusSubmit = async ({ time, title }) => {};
+  const handleDesktopChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    setIsCheckedDesktop(checked);
+  };
+
+  const handleTabChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    setIsCheckedTab(checked);
+  };
+
+  const handleShortBreakSubmit = async ({
+    shortBreakTimer,
+    shortBreakTitle,
+  }) => {
+    setIsLoading(true);
+    const formData: ShortBreak = {
+      shortBreakTimer,
+      shortBreakTitle,
+      isShortBreakDesktopNotification: isCheckedDesktop,
+      isShortBreakTabNotification: isCheckedTab,
+    };
+
+    setTimeout(() => {
+      saveShortBreakSettings(formData).then(() => {
+        chrome.storage.local.get(["shortBreak"], (result) => {
+          const { shortBreak } = result;
+          const sBTimer = shortBreak.shortBreakTimer * 60; // reset timer
+          chrome.storage.local.set({ sBTimer }, function () {
+            setIsLoading(false);
+          });
+        });
+        setStoredStatus(TimerStatus.PAUSED).then(() => {
+          getStoredStatus().then((storedStatus) => {
+            updatePomodoro({ type: Actions.STATUS, payload: storedStatus });
+          });
+        });
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (isMounted) {
+      getShortBreakSettings().then((storedSetting) => {
+        reset({
+          shortBreakTimer: storedSetting["shortBreakTimer"],
+          shortBreakTitle: storedSetting["shortBreakTitle"],
+        });
+
+        setIsCheckedDesktop(storedSetting["isShortBreakDesktopNotification"]);
+        setIsCheckedTab(storedSetting["isShortBreakTabNotification"]);
+      });
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <form
-      onSubmit={handleSubmit(hanldeFocusSubmit)}
+      onSubmit={handleSubmit(handleShortBreakSubmit)}
       className="add-note__form add-note__form--settings"
     >
       <div className="add-note__form-group">
-        <label htmlFor="time" className="add-note__label">
+        <label htmlFor="shortBreakTimer" className="add-note__label">
           Duration in minutes
         </label>
         <input
-          name="time"
+          min={1}
+          max={1440}
+          name="shortBreakTimer"
           type="number"
           placeholder="25"
           className="add-note__input add-note__input--number"
-          {...register("time", {
+          {...register("shortBreakTimer", {
             required: true,
           })}
         />
-        {errors.time && errors.time?.type === "required" && (
-          <span className="block w-full text-red-500 p-0.5 mt-0.5">
-            time cannot be blank
-          </span>
-        )}
+        {errors["shortBreakTimer"] &&
+          errors["shortBreakTimer"]?.type === "required" && (
+            <Error text="time cannot be blank" />
+          )}
       </div>
       <div className="add-note__form-group">
         <span>Timer sound</span>
@@ -46,30 +120,32 @@ const ShortBreakForm = () => {
           Textfield Title
         </label>
         <input
-          {...register("title", {
+          {...register("shortBreakTitle", {
             required: true,
           })}
           type="text"
-          name="note"
+          name="shortBreakTitle"
           placeholder="Enter input"
           className="add-note__input"
         />
-        {errors.title && errors.title?.type === "required" && (
-          <span className="block w-full text-red-500 p-0.5 mt-0.5">
-            title cannot be blank
-          </span>
-        )}
+        {errors["shortBreakTitle"] &&
+          errors["shortBreakTitle"]?.type === "required" && (
+            <Error text="title cannot be blank" />
+          )}
       </div>
+
       <div className="add-note__form-group">
         <div className="add-note__inner-group">
           <input
-            id="desktop-notification"
-            className="add-note__checkbox"
+            name={"isShortBreakDesktopNotification"}
             type="checkbox"
-            name="desktop-notification"
+            id={"isShortBreakDesktopNotification"}
+            className="add-note__checkbox"
+            checked={isCheckedDesktop}
+            onChange={handleDesktopChange}
           />
           <label
-            htmlFor="desktop-notification"
+            htmlFor={"isShortBreakDesktopNotification"}
             className="add-note__checkbox--text"
           >
             Show desktop notification when complete
@@ -79,22 +155,32 @@ const ShortBreakForm = () => {
       <div className="add-note__form-group">
         <div className="add-note__inner-group">
           <input
+            name="isShortBreakTabNotification"
             type="checkbox"
-            name="tab-notification"
-            id="tab-notification"
+            id="isShortBreakTabNotification"
             className="add-note__checkbox"
+            checked={isCheckedTab}
+            onChange={handleTabChange}
           />
+
           <label
-            htmlFor="tab-notification"
+            htmlFor="isShortBreakTabNotification"
             className="add-note__checkbox--text"
           >
-            {" "}
             Show new tab notification when complete
           </label>
         </div>
       </div>
       <div className="add-note__form-group">
-        <button className="add-note__button">Save</button>
+        <button
+          className={`add-note__button ${
+            isLoading && "add-note__button--loading"
+          }`}
+          type="submit"
+          disabled={isLoading}
+        >
+          Save{isLoading ? "..." : ""}
+        </button>
       </div>
     </form>
   );

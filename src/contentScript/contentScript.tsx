@@ -4,7 +4,7 @@ import FocusTabNotification from "../components/FocusTabNotification";
 import { Messages } from "../types/messages";
 import "./contentScript.css";
 import "@fontsource/roboto";
-import { getFocusSettings } from "../utils/storage";
+import { getFocusSettings, getShortBreakSettings } from "../utils/storage";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -13,16 +13,29 @@ function App() {
   useEffect(() => {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.type === Messages.RESET_STATUS) {
-        setIsTabNotification(true);
+        getFocusSettings().then((focus) => {
+          setIsTabNotification(focus.focusTabNotification);
+          setMessage(focus.focusTitle);
+        });
         setTimeout(() => {
           sendResponse(Messages.RESET_STATUS);
           setIsTabNotification(false);
         }, 5000);
       }
+
+      if (message.type === Messages.SHORTBREAK_OVER) {
+        getShortBreakSettings().then((shortBreak) => {
+          setIsTabNotification(shortBreak.isShortBreakTabNotification);
+          setMessage(shortBreak.shortBreakTitle);
+        });
+
+        setTimeout(() => {
+          sendResponse(Messages.SHORTBREAK_OVER);
+          setIsTabNotification(false);
+        }, 6000);
+      }
       return true;
     });
-
-    getFocusSettings().then((focus) => setMessage(focus.focusTitle));
   }, []);
 
   return (

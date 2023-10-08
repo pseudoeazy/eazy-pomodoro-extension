@@ -7,6 +7,6 @@ export interface Focus {
 export interface ShortBreak {
   shortBreakTimer: number;
   shortBreakTitle: string;
-  shortBreakTesktopNotification: boolean;
-  shortBreakTabNotification: boolean;
+  isShortBreakDesktopNotification: boolean;
+  isShortBreakTabNotification: boolean;
 }

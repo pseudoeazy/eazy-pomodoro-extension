@@ -1,15 +1,18 @@
 import { Messages } from "../types/messages";
-import { Focus } from "../types/settings";
+import { Focus, ShortBreak } from "../types/settings";
 import { TimerStatus } from "../types/time";
 import {
   getFocusSettings,
+  getShortBreakSettings,
   getStoredStatus,
   saveFocusSettings,
   saveNotes,
+  saveShortBreakSettings,
   setStoredStatus,
 } from "../utils/storage";
 
 const EAZY_POMODORO_TIMER = "EAZY_POMODORO_TIMER";
+const EAZY_POMODORO_TIMER_SHORT_BREAK = "EAZY_POMODORO_TIMER_SHORT_BREAK";
 
 function startFocusAlarm() {
   chrome.storage.local.get(["timer", "focus"], (result) => {
@@ -28,6 +31,20 @@ function startFocusAlarm() {
   });
 }
 
+function startShortBreakAlarm() {
+  chrome.storage.local.get(["sBTimer", "shortBreak"], (result) => {
+    const { shortBreak } = result;
+    const sBTimer = shortBreak.shortBreakTimer * 60; // convert minute to seconds
+    chrome.storage.local.set({
+      sBTimer,
+    });
+
+    chrome.alarms.create(EAZY_POMODORO_TIMER_SHORT_BREAK, {
+      periodInMinutes: 1 / 60,
+    });
+  });
+}
+
 function stopFocusingAlarm() {
   setStoredStatus(TimerStatus.DEFAULT).then(() => {
     getFocusSettings().then((focus) => {
@@ -36,6 +53,17 @@ function stopFocusingAlarm() {
     });
 
     chrome.alarms.clear(EAZY_POMODORO_TIMER);
+  });
+}
+
+function stopShortBreakAlarm() {
+  setStoredStatus(TimerStatus.PAUSED).then(() => {
+    getShortBreakSettings().then((shortBreak) => {
+      const sBTimer = shortBreak.shortBreakTimer * 60; // reset timer
+      chrome.storage.local.set({ sBTimer });
+    });
+
+    chrome.alarms.clear(EAZY_POMODORO_TIMER_SHORT_BREAK);
   });
 }
 
@@ -51,15 +79,23 @@ function showNotification(message: string) {
 chrome.runtime.onInstalled.addListener(() => {
   //add default settings
   chrome.storage.local.set({
-    timer: 0.3 * 60, // convert minute to seconds
+    timer: 25 * 60, // convert minute to seconds
+    sBTimer: 5 * 60, // convert minute to seconds
     status: TimerStatus.DEFAULT,
   });
 
   saveFocusSettings({
-    focusTimer: 0.3,
+    focusTimer: 25,
     focusTitle: "Hello, 25 minutes has passed!",
     focusDesktopNotification: true,
     focusTabNotification: true,
+  });
+
+  saveShortBreakSettings({
+    shortBreakTimer: 5,
+    shortBreakTitle: "Break Over, 5 minutes has passed!",
+    isShortBreakDesktopNotification: true,
+    isShortBreakTabNotification: true,
   });
 
   saveNotes([
@@ -80,7 +116,7 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
 
       if (status === TimerStatus.FOCUSING) {
         const timer = result.timer - 1;
-        console.log({ timer });
+
         if (result.timer <= 0) {
           status = TimerStatus.DEFAULT;
         }
@@ -117,9 +153,49 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
       }
     });
   }
+
+  if (alarmInfo.name === EAZY_POMODORO_TIMER_SHORT_BREAK) {
+    chrome.storage.local.get(["status", "sBTimer", "shortBreak"], (result) => {
+      let status: TimerStatus = result.status;
+      const shortBreak: ShortBreak = result.shortBreak;
+
+      if (status === TimerStatus.RESTING) {
+        const sBTimer = result.sBTimer - 1;
+
+        if (sBTimer <= 0) {
+          stopShortBreakAlarm();
+          if (shortBreak.isShortBreakDesktopNotification) {
+            showNotification(shortBreak.shortBreakTitle);
+          }
+
+          chrome.tabs.query({ active: true }, function (tabs) {
+            const activeTab = tabs[0];
+            if (activeTab) {
+              chrome.tabs.sendMessage(
+                activeTab.id,
+                {
+                  type: Messages.SHORTBREAK_OVER,
+                },
+                (response) => {
+                  if (chrome.runtime.lastError) {
+                    // Handle the error, e.g., the popup is closed.
+                    console.log("error:", chrome.runtime.lastError);
+                    return;
+                  } else {
+                    console.log("response from content:" + response);
+                  }
+                }
+              );
+            }
+          });
+        }
+        chrome.storage.local.set({ sBTimer });
+      }
+    });
+  }
 });
 
-async function processTimerStatus(status: TimerStatus) {
+async function processTimerStatus(status: TimerStatus): Promise<void> {
   switch (status) {
     case TimerStatus.DEFAULT:
       stopFocusingAlarm();
@@ -130,11 +206,10 @@ async function processTimerStatus(status: TimerStatus) {
       break;
 
     case TimerStatus.PAUSED:
-      console.log("paused ", status);
       break;
 
     case TimerStatus.RESTING:
-      console.log("resting: ", status);
+      startShortBreakAlarm();
       break;
   }
 }
