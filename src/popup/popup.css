@@ -120,7 +120,17 @@ button {
       height: 0.125rem;
       background-color: #d8d1d1;
       width: 100%; }
+    .progress-bar__container::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 0.125rem;
+      background-color: #d45735;
+      width: var(--custom-width, 0%); }
   .progress-bar__step {
+    position: relative;
+    z-index: 10;
     width: 0.75rem;
     height: 0.75rem;
     border-radius: 50%;

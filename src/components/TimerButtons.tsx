@@ -35,7 +35,7 @@ export default function TimerButtons() {
       }
     );
   };
-
+  console.log({ pomodoro });
   return (
     <div className="timer__btn-group">
       <button

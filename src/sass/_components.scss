@@ -102,13 +102,26 @@
       background-color: $color-inactive;
       width: 100%;
     }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 0.125rem;
+      background-color: $color-primary;
+      width: var(--custom-width, 0%);
+    }
   }
 
   &__step {
+    position: relative;
+    z-index: 10;
     width: 0.75rem;
     height: 0.75rem;
     border-radius: 50%;
     background-color: $color-inactive;
+
     &:not(:last-child) {
       margin-right: 4rem;
     }

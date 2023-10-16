@@ -97,6 +97,7 @@ const ShortBreakForm = () => {
           min={1}
           max={1440}
           name="shortBreakTimer"
+          id="shortBreakTimer"
           type="number"
           placeholder="25"
           className="add-note__input add-note__input--number"
@@ -116,7 +117,7 @@ const ShortBreakForm = () => {
         </select>
       </div>
       <div className="add-note__form-group">
-        <label htmlFor="note" className="add-note__label">
+        <label htmlFor="shortBreakTitle" className="add-note__label">
           Textfield Title
         </label>
         <input
@@ -125,6 +126,7 @@ const ShortBreakForm = () => {
           })}
           type="text"
           name="shortBreakTitle"
+          id="shortBreakTitle"
           placeholder="Enter input"
           className="add-note__input"
         />

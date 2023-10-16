@@ -93,6 +93,7 @@ const FocusContentForm = () => {
         <input
           min={1}
           max={1440}
+          id="focusTimer"
           name="focusTimer"
           type="number"
           placeholder="25"
@@ -112,7 +113,7 @@ const FocusContentForm = () => {
         </select>
       </div>
       <div className="add-note__form-group">
-        <label htmlFor="note" className="add-note__label">
+        <label htmlFor="focusTitle" className="add-note__label">
           Textfield Title
         </label>
         <input
@@ -121,6 +122,7 @@ const FocusContentForm = () => {
           })}
           type="text"
           name="focusTitle"
+          id="focusTitle"
           placeholder="Enter input"
           className="add-note__input"
         />

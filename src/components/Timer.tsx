@@ -9,6 +9,18 @@ const statusText = {
   paused: "Paused",
 };
 
+function getTime(seconds: number) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return { hours, minutes, remainingSeconds };
+}
+
+function progressStatus(seconds: number, initialTime: number): number {
+  const { hours, minutes, remainingSeconds } = getTime(seconds);
+  const elapsedTime = hours + minutes + remainingSeconds;
+  return (elapsedTime / initialTime) * 100;
+}
 function formatTime(seconds: number) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
