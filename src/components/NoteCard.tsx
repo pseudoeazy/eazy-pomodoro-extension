@@ -40,7 +40,6 @@ export default function NoteCard() {
   };
 
   const handleChecked = async (noteCardToCheck: NoteCard) => {
-    console.log("handleChecked:", noteCardToCheck);
     const checkedNoteCards = noteCards.map((noteCard) => {
       if (noteCard.note.id === noteCardToCheck.note.id) {
         return {

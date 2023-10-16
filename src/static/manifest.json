@@ -1,7 +1,7 @@
 {
   "name": "Eazy Pomodoro Extension",
   "description": "This tool helps you manage your work sessions effectively using the proven Pomodoro Technique.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "icons": {
     "16": "icon.png",

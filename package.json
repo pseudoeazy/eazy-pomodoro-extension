@@ -1,6 +1,6 @@
 {
   "name": "eazy-pomodoro-chrome-extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Pomodoro Chrome Extension in React and TypeScript using a simple Webpack build process",
   "scripts": {
     "start": "webpack --watch --progress --config webpack.dev.js",

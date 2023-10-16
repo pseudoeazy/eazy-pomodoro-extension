@@ -9,7 +9,6 @@ import TimerButtons from "../TimerButtons";
 import { usePomodoro } from "../context/PomodoroContext";
 import { TimerStatus } from "../../types/time";
 import Resting from "./Resting";
-import TimerScreen from "../TimerScreen";
 
 export default function StartFocusing() {
   const { pomodoro } = usePomodoro();
@@ -18,9 +17,8 @@ export default function StartFocusing() {
       {pomodoro.status !== TimerStatus.RESTING && (
         <Container className="start">
           <AppBar />
-          {/* <ProgressBar /> */}
-          {/* <Timer /> */}
-          <TimerScreen />
+
+          <Timer />
           <div className="timer">
             <TimerButtons />
           </div>
