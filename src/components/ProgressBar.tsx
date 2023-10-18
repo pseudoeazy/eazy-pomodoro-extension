@@ -1,19 +1,10 @@
 import React from "react";
+import { barStopIndicator } from "../utils/helpers";
 
 type Props = {
   targetTime: number;
   progress: number;
 };
-
-function barStopIndicator(range: number, progress: number, targetTime: number) {
-  const currentProgress = (progress / 100) * targetTime;
-  const halfOfProgress = targetTime * range - 62; //substracting 62 is hardfix
-  //uncomment for debugging
-  // console.log({ currentProgress, halfOfProgress, progress, targetTime, range });
-
-  if (currentProgress >= halfOfProgress) return true;
-  return false;
-}
 
 export default function ProgressBar({ progress, targetTime }: Props) {
   const primaryColor = "#d45735";

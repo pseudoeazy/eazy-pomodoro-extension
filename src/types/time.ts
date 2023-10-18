@@ -4,3 +4,11 @@ export enum TimerStatus {
   FOCUSING = "focusing",
   PAUSED = "paused",
 }
+
+export type Time = {
+  hours: number;
+  minutes: number;
+  remainingSeconds: number;
+};
+
+export type UpdateTime = () => void;
